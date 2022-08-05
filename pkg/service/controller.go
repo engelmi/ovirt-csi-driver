@@ -31,6 +31,8 @@ var ControllerCaps = []csi.ControllerServiceCapability_RPC_Type{
 
 //CreateVolume creates the disk for the request, unattached from any VM
 func (c *ControllerService) CreateVolume(ctx context.Context, req *csi.CreateVolumeRequest) (*csi.CreateVolumeResponse, error) {
+	klog.Infof("CreateVolume func has been called with %v", req)
+
 	klog.Infof("Creating disk %s", req.Name)
 	storageDomainName := req.Parameters[ParameterStorageDomainName]
 	if len(storageDomainName) == 0 {
@@ -148,6 +150,8 @@ func handleCreateVolumeImageFormat(
 
 //DeleteVolume removed the disk from oVirt
 func (c *ControllerService) DeleteVolume(ctx context.Context, req *csi.DeleteVolumeRequest) (*csi.DeleteVolumeResponse, error) {
+	klog.Infof("DeleteVolume func has been called with %v", req)
+
 	vId := ovirtclient.DiskID(req.VolumeId)
 	if len(vId) == 0 {
 		return nil, fmt.Errorf("error required paramater VolumeId wasn't set")
@@ -180,6 +184,8 @@ func (c *ControllerService) DeleteVolume(ctx context.Context, req *csi.DeleteVol
 // ControllerPublishVolume takes a volume, which is an oVirt disk, and attaches it to a node, which is an oVirt VM.
 func (c *ControllerService) ControllerPublishVolume(
 	ctx context.Context, req *csi.ControllerPublishVolumeRequest) (*csi.ControllerPublishVolumeResponse, error) {
+	klog.Infof("ControllerPublishVolume func has been called with %v", req)
+
 	vId := ovirtclient.DiskID(req.VolumeId)
 	if len(vId) == 0 {
 		return nil, fmt.Errorf("error required request paramater VolumeId wasn't set")
@@ -225,6 +231,8 @@ func (c *ControllerService) ControllerPublishVolume(
 
 //ControllerUnpublishVolume detaches the disk from the VM.
 func (c *ControllerService) ControllerUnpublishVolume(ctx context.Context, req *csi.ControllerUnpublishVolumeRequest) (*csi.ControllerUnpublishVolumeResponse, error) {
+	klog.Infof("ControllerUnpublishVolume func has been called with %v", req)
+
 	vId := ovirtclient.DiskID(req.VolumeId)
 	if len(vId) == 0 {
 		return nil, fmt.Errorf("error required request paramater VolumeId wasn't set")
@@ -255,36 +263,48 @@ func (c *ControllerService) ControllerUnpublishVolume(ctx context.Context, req *
 
 //ValidateVolumeCapabilities
 func (c *ControllerService) ValidateVolumeCapabilities(context.Context, *csi.ValidateVolumeCapabilitiesRequest) (*csi.ValidateVolumeCapabilitiesResponse, error) {
+	klog.Infof("ValidateVolumeCapabilities func has been called")
 	return nil, status.Error(codes.Unimplemented, "")
 }
 
 //ListVolumes
 func (c *ControllerService) ListVolumes(context.Context, *csi.ListVolumesRequest) (*csi.ListVolumesResponse, error) {
+	klog.Infof("ListVolumes func has been called")
 	return nil, status.Error(codes.Unimplemented, "")
 }
 
 //GetCapacity
 func (c *ControllerService) GetCapacity(context.Context, *csi.GetCapacityRequest) (*csi.GetCapacityResponse, error) {
+	klog.Infof("GetCapacity func has been called")
+
 	return nil, status.Error(codes.Unimplemented, "")
 }
 
 //CreateSnapshot
 func (c *ControllerService) CreateSnapshot(context.Context, *csi.CreateSnapshotRequest) (*csi.CreateSnapshotResponse, error) {
+	klog.Infof("CreateSnapshot func has been called")
+
 	return nil, status.Error(codes.Unimplemented, "")
 }
 
 //DeleteSnapshot
 func (c *ControllerService) DeleteSnapshot(context.Context, *csi.DeleteSnapshotRequest) (*csi.DeleteSnapshotResponse, error) {
+	klog.Infof("DeleteSnapshot func has been called")
+
 	return nil, status.Error(codes.Unimplemented, "")
 }
 
 //ListSnapshots
 func (c *ControllerService) ListSnapshots(context.Context, *csi.ListSnapshotsRequest) (*csi.ListSnapshotsResponse, error) {
+	klog.Infof("ListSnapshots func has been called")
+
 	return nil, status.Error(codes.Unimplemented, "")
 }
 
 //ControllerExpandVolume
 func (c *ControllerService) ControllerExpandVolume(ctx context.Context, req *csi.ControllerExpandVolumeRequest) (*csi.ControllerExpandVolumeResponse, error) {
+	klog.Infof("ControllerExpandVolume func has been called")
+
 	volumeID := ovirtclient.DiskID(req.GetVolumeId())
 	if len(volumeID) == 0 {
 		return nil, status.Error(codes.InvalidArgument, "Volume ID not provided")
@@ -362,6 +382,8 @@ func (c *ControllerService) isNodeExpansionRequired(
 
 //ControllerGetCapabilities
 func (c *ControllerService) ControllerGetCapabilities(context.Context, *csi.ControllerGetCapabilitiesRequest) (*csi.ControllerGetCapabilitiesResponse, error) {
+	klog.Infof("ControllerGetCapabilities func has been called")
+
 	caps := make([]*csi.ControllerServiceCapability, 0, len(ControllerCaps))
 	for _, capability := range ControllerCaps {
 		caps = append(

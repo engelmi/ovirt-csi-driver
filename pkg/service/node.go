@@ -42,6 +42,8 @@ func baseDevicePathByInterface(diskInterface ovirtclient.DiskInterface) (string,
 }
 
 func (n *NodeService) NodeStageVolume(ctx context.Context, req *csi.NodeStageVolumeRequest) (*csi.NodeStageVolumeResponse, error) {
+	klog.Infof("NodeStageVolume func has been called with %v", req)
+
 	vId := ovirtclient.DiskID(req.VolumeId)
 	if vId == "" {
 		return nil, fmt.Errorf("NodeStageVolumeRequest didn't contain required field VolumeId")
@@ -84,10 +86,13 @@ func (n *NodeService) NodeStageVolume(ctx context.Context, req *csi.NodeStageVol
 }
 
 func (n *NodeService) NodeUnstageVolume(_ context.Context, _ *csi.NodeUnstageVolumeRequest) (*csi.NodeUnstageVolumeResponse, error) {
+	klog.Infof("NodeUnstageVolume func has been called")
 	return &csi.NodeUnstageVolumeResponse{}, nil
 }
 
 func (n *NodeService) NodePublishVolume(ctx context.Context, req *csi.NodePublishVolumeRequest) (*csi.NodePublishVolumeResponse, error) {
+	klog.Infof("NodePublishVolume func has been called with %v", req)
+
 	vId := ovirtclient.DiskID(req.VolumeId)
 	if vId == "" {
 		return nil, fmt.Errorf("NodeStageVolumeRequest didn't contain required field VolumeId")
@@ -122,6 +127,8 @@ func (n *NodeService) NodePublishVolume(ctx context.Context, req *csi.NodePublis
 }
 
 func (n *NodeService) NodeUnpublishVolume(_ context.Context, req *csi.NodeUnpublishVolumeRequest) (*csi.NodeUnpublishVolumeResponse, error) {
+	klog.Infof("NodeUnpublishVolume func has been called with %v", req)
+
 	mounter := mount.New("")
 	klog.Infof("Unmounting %s", req.GetTargetPath())
 	err := mounter.Unmount(req.GetTargetPath())
@@ -157,6 +164,8 @@ func (n *NodeService) publishBlockVolume(req *csi.NodePublishVolumeRequest, devi
 }
 
 func (n *NodeService) NodeGetVolumeStats(_ context.Context, req *csi.NodeGetVolumeStatsRequest) (*csi.NodeGetVolumeStatsResponse, error) {
+	klog.Infof("NodeGetVolumeStats func has been called with %v", req)
+
 	if len(req.VolumeId) == 0 {
 		return nil, status.Error(codes.InvalidArgument, "NodeGetVolumeStats volume ID was empty")
 	}
@@ -221,6 +230,8 @@ func (n *NodeService) NodeGetVolumeStats(_ context.Context, req *csi.NodeGetVolu
 }
 
 func (n *NodeService) NodeExpandVolume(_ context.Context, req *csi.NodeExpandVolumeRequest) (*csi.NodeExpandVolumeResponse, error) {
+	klog.Infof("NodeExpandVolume func has been called with %v", req)
+
 	volumePath := req.GetVolumePath()
 	if len(volumePath) == 0 {
 		return nil, status.Error(codes.InvalidArgument, "volume path must be provided")
@@ -257,10 +268,14 @@ func (n *NodeService) NodeExpandVolume(_ context.Context, req *csi.NodeExpandVol
 }
 
 func (n *NodeService) NodeGetInfo(context.Context, *csi.NodeGetInfoRequest) (*csi.NodeGetInfoResponse, error) {
+	klog.Infof("NodeGetInfo func has been called")
+
 	return &csi.NodeGetInfoResponse{NodeId: string(n.nodeId)}, nil
 }
 
 func (n *NodeService) NodeGetCapabilities(context.Context, *csi.NodeGetCapabilitiesRequest) (*csi.NodeGetCapabilitiesResponse, error) {
+	klog.Infof("NodeGetCapabilities func has been called")
+
 	caps := make([]*csi.NodeServiceCapability, 0, len(NodeCaps))
 	for _, c := range NodeCaps {
 		caps = append(

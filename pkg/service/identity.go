@@ -17,6 +17,8 @@ type IdentityService struct {
 
 //GetPluginInfo returns the vendor name and version - set in build time
 func (i *IdentityService) GetPluginInfo(context.Context, *csi.GetPluginInfoRequest) (*csi.GetPluginInfoResponse, error) {
+	klog.Infof("GetPluginInfo func has been called")
+
 	return &csi.GetPluginInfoResponse{
 		Name:          VendorName,
 		VendorVersion: VendorVersion,
@@ -25,6 +27,8 @@ func (i *IdentityService) GetPluginInfo(context.Context, *csi.GetPluginInfoReque
 
 //GetPluginCapabilities declares the plugins capabilities
 func (i *IdentityService) GetPluginCapabilities(context.Context, *csi.GetPluginCapabilitiesRequest) (*csi.GetPluginCapabilitiesResponse, error) {
+	klog.Infof("GetPluginCapabilities func has been called")
+
 	return &csi.GetPluginCapabilitiesResponse{
 		Capabilities: []*csi.PluginCapability{
 			{
@@ -47,6 +51,8 @@ func (i *IdentityService) GetPluginCapabilities(context.Context, *csi.GetPluginC
 
 // Probe checks the state of the connection to ovirt-engine
 func (i *IdentityService) Probe(_ context.Context, _ *csi.ProbeRequest) (*csi.ProbeResponse, error) {
+	klog.Infof("Probe func has been called")
+
 	err := i.ovirtClient.Test()
 	if err != nil {
 		klog.Errorf("Could not get connection %v", err)

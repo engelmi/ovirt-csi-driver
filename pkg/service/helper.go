@@ -6,6 +6,7 @@ import (
 	ovirtclient "github.com/ovirt/go-ovirt-client"
 	"github.com/pkg/errors"
 	"golang.org/x/net/context"
+	"k8s.io/klog"
 )
 
 func isNotFound(err error) bool {
@@ -82,11 +83,12 @@ func getStorageDomainByName(
 		return nil, err
 	}
 	for _, sd := range sds {
+		klog.Infof("Is '%s' equal to '%s'?", sd.Name(), storageDomainName)
 		if sd.Name() == storageDomainName {
 			return sd, nil
 		}
 	}
-	return nil, nil
+	return nil, errors.New(fmt.Sprintf("Did not find a storage domain with name '%s'", storageDomainName))
 }
 
 func isFileDomain(storageType ovirtclient.StorageDomainType) bool {

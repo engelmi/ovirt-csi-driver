@@ -86,7 +86,18 @@ func handle() {
 		}
 		nodeId = ovirtclient.VMID(get.Status.NodeInfo.SystemUUID)
 	}
+	klog.Infof("Determined NodeID '%s'", nodeId)
 
+	/*
+		vm, err := ovirtClient.GetVMByName("test VM")
+		if err != nil {
+			klog.Fatal(err)
+		}
+		nodeId = vm.ID()
+		klog.Infof("Overridden NodeID '%s'", nodeId)
+	*/
+
+	klog.Infof("Creating CSIDriver with NodeID '%s'", nodeId)
 	driver := service.NewOvirtCSIDriver(ovirtClient, nodeId)
 
 	driver.Run(*endpoint)

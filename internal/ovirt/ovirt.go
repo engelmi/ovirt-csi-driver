@@ -8,6 +8,7 @@ import (
 	ovirtclient "github.com/ovirt/go-ovirt-client"
 	kloglogger "github.com/ovirt/go-ovirt-client-log-klog/v2"
 	"gopkg.in/yaml.v2"
+	"k8s.io/klog"
 )
 
 const defaultOvirtConfigEnvVar = "OVIRT_CONFIG"
@@ -19,10 +20,14 @@ type Config struct {
 	Password string `yaml:"ovirt_password"`
 	CAFile   string `yaml:"ovirt_cafile,omitempty"`
 	Insecure bool   `yaml:"ovirt_insecure,omitempty"`
+	UseMock  bool   `yaml:"ovirt_use_mock"`
 }
 
 func NewClient() (ovirtclient.Client, error) {
 	ovirtConfig, err := GetOvirtConfig()
+	if err != nil {
+		return nil, err
+	}
 	tls := ovirtclient.TLS()
 	if ovirtConfig.Insecure {
 		tls.Insecure()
@@ -31,7 +36,20 @@ func NewClient() (ovirtclient.Client, error) {
 		tls.CACertsFromFile(ovirtConfig.CAFile)
 	}
 	logger := kloglogger.New()
-	//TODO: HANDLE VERBUSE
+
+	klog.Infof("Using mock client: %t", ovirtConfig.UseMock)
+	if ovirtConfig.UseMock {
+		//client := ovirtclient.NewMock()
+		helper, _ := ovirtclient.NewMockTestHelper(logger)
+		client := helper.GetClient()
+
+		_, err := client.CreateVM(helper.GetClusterID(), helper.GetBlankTemplateID(), "test VM", nil)
+		if err != nil {
+			return nil, err
+		}
+
+		return client, nil
+	}
 	client, err := ovirtclient.New(
 		ovirtConfig.URL,
 		ovirtConfig.Username,
