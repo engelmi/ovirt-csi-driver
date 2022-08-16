@@ -10,3 +10,4 @@ parameters:
   # the name of the oVirt storage domain. "Test storage domain" is used by the oVirt engine mock.
   storageDomainName: "OCP_STORAGE"
   thinProvisioning: "true"
+  fsType: "ext4"

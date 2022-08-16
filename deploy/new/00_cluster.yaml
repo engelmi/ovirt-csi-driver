@@ -5,5 +5,14 @@ nodes:
 - role: control-plane
 - role: control-plane
 - role: worker
+  extraMounts:
+  - hostPath: /tmp/kind/ovirtcsi/worker1
+    containerPath: /tmp/worker1
 - role: worker
+  extraMounts:
+  - hostPath: /tmp/kind/ovirtcsi/worker2
+    containerPath: /tmp/worker2
 - role: worker
+  extraMounts:
+  - hostPath: /tmp/kind/ovirtcsi/worker3
+    containerPath: /tmp/worker3
